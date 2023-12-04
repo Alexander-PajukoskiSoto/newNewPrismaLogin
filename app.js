@@ -4,9 +4,11 @@ const app = express();
 
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const bodypasrer = require('body-parser');
+const bodyPasrer = require('body-parser');
 
 app.use(express.json());
+
+app.use(bodyPasrer.urlencoded({extended:true}));
 
 app.set('view engine','ejs');
 
@@ -20,6 +22,14 @@ app.get('/', async (req,res)=>{
 
         res.status(500).json({error:'error fetching login'});
 
+    }
+})
+app.post('/', async (req,res)=>{
+    try {
+        console.log(req.body);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({error:'error fetching login'});
     }
 })
 
