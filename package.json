@@ -11,5 +11,8 @@
   "license": "ISC",
   "devDependencies": {
     "prisma": "^5.6.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.6.0"
   }
 }
