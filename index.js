@@ -1,6 +1,13 @@
-const { PrismaClient } = require('@prisma/client')
-
 const prisma = new PrismaClient()
+const express = require('express');
+
+const { PrismaClient } = require('@prisma/client');
+
+const app = express();
+
+app.use(express.json());
+
+app.get('/')
 
 async function main() {
     await prisma.user.create({
@@ -30,6 +37,7 @@ async function main() {
       console.log(post)
   }
 
+  
 main()
   .then(async () => {
     await prisma.$disconnect()
