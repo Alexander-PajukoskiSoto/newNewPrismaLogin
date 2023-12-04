@@ -5,10 +5,22 @@ const app = express();
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const bodyPasrer = require('body-parser');
+const mysql = require('mysql2')
 
 app.use(express.json());
 
 app.use(bodyPasrer.urlencoded({extended:true}));
+
+app.use(express.static('public'));
+
+var connection = mysql.createConnection({
+
+    host     : 'localhost',
+    user     : 'root',
+    password : '',
+    database : 'tenta3'
+
+  });
 
 app.set('view engine','ejs');
 
@@ -26,8 +38,9 @@ app.get('/', async (req,res)=>{
 })
 app.post('/', async (req,res)=>{
     try {
-        console.log(req.body);
-    } catch (error) {
+        console.log(req.body.testThingy);
+        res.redirect('/');
+        } catch (error) {
         console.log(error);
         res.status(500).json({error:'error fetching login'});
     }
