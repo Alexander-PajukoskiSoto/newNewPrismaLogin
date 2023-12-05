@@ -18,12 +18,14 @@ model Post {
   content   String?
   published Boolean  @default(false)
   authorId  Int
+  image String?
 }
 
 model User {
   id      Int      @id @default(autoincrement())
   email   String   @unique
-  password    String?
+  password    String
+  username String @unique
   admin Boolean
 
 }
