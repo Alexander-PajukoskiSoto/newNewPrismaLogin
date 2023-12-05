@@ -28,7 +28,7 @@ app.get('/', async (req,res)=>{
     try {
         // const logon = await prisma.user.findMany();
         // res.json(logon);
-       res.render('index',{Cool:"dkohajdlka"})
+       res.render('index',{pageName:"Create User"})
     } catch (error) {
         console.log(error);
 
@@ -38,7 +38,15 @@ app.get('/', async (req,res)=>{
 })
 app.post('/', async (req,res)=>{
     try {
-        console.log(req.body.testThingy);
+        console.log(req.body.mail);
+        console.log(req.body.name);
+        const user = await prisma.User.create({
+            data: {
+              email: req.body.mail,
+              name: req.body.name,
+            },
+          })
+
         res.redirect('/');
         } catch (error) {
         console.log(error);
