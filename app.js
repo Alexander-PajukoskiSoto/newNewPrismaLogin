@@ -6,6 +6,13 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const bodyPasrer = require('body-parser');
 const mysql = require('mysql2')
+const session = require('express-session');
+
+app.use(session({
+    secret: 'some secret',
+    cookie: {maxAge: 10000},
+    saveUninitialized: false
+}))
 
 app.use(express.json());
 
@@ -40,10 +47,14 @@ app.post('/', async (req,res)=>{
     try {
         console.log(req.body.mail);
         console.log(req.body.name);
+        console.log(req.body.admin)
         const user = await prisma.User.create({
             data: {
               email: req.body.mail,
-              name: req.body.name,
+              username: req.body.username,
+              shownName: req.body.shownName,
+              password: req.body.password,
+              admin: req.body.admin === "true" ? req.body.admin : "false"
             },
           })
 

@@ -26,6 +26,6 @@ model User {
   email   String   @unique
   password    String
   username String @unique
-  admin Boolean
-
+  admin String
+  shownName String
 }
