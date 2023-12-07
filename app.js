@@ -87,8 +87,16 @@ app.post('/login',async(req,res)=>{
     console.log('No susch username or email')
   }else if(req.body.password ==  user.password ){
     console.log('successfully logged in')
+    res.redirect('/posts')
   }
-  res.redirect('/login')
+  else{
+    res.redirect('/login')
+  }
+})
+
+app.get('/posts', async (req,res)=>{
+  res.render('posts',{pageName:"Posts"})
+
 })
 
 const PORT = process.env.PORT || 3000;
