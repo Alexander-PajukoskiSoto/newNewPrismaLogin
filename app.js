@@ -61,14 +61,34 @@ app.post('/', async (req,res)=>{
         res.status(500).json({error:'error fetching login'});
     }
 })
-
-app.get('/posts', async (req,res)=>{
+//LOGIN
+app.get('/login', async (req,res)=>{
   try {
-    res.render('posts',{pageName:"Create User"})
+    res.render('login',{pageName:"Login"})
   } catch (error) {
     console.log(error);
     res.status(500).json({error:'error fetching ligin'});
   }
+})
+
+app.post('/login',async(req,res)=>{
+
+  const user = await prisma.user.findFirst({
+    where: {
+      OR:[{
+        username: req.body.emailOrUName},
+        {email: req.body.emailOrUName
+      }]
+
+  }})
+  console.log(user);
+  if(req.body.emailOrUName == '')
+  {
+    console.log('No susch username or email')
+  }else if(req.body.password ==  user.password ){
+    console.log('successfully logged in')
+  }
+  res.redirect('/login')
 })
 
 const PORT = process.env.PORT || 3000;
