@@ -45,9 +45,6 @@ app.get('/', async (req,res)=>{
 })
 app.post('/', async (req,res)=>{
     try {
-        console.log(req.body.mail);
-        console.log(req.body.name);
-        console.log(req.body.admin)
         const user = await prisma.User.create({
             data: {
               email: req.body.mail,
@@ -63,6 +60,15 @@ app.post('/', async (req,res)=>{
         console.log(error);
         res.status(500).json({error:'error fetching login'});
     }
+})
+
+app.get('/posts', async (req,res)=>{
+  try {
+    res.render('posts',{pageName:"Create User"})
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({error:'error fetching ligin'});
+  }
 })
 
 const PORT = process.env.PORT || 3000;

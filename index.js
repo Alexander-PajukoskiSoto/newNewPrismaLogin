@@ -8,7 +8,6 @@ const app = express();
 
 app.use(express.json());
 
-
 async function main() {
     await prisma.user.create({
         data: {
