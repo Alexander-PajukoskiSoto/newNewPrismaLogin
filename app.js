@@ -94,8 +94,26 @@ app.post('/login',async(req,res)=>{
   }
 })
 
+app.get('/createPost', async (req,res)=>{
+  res.render('createPost',{pageName: 'Create Post'})
+  
+})
+
+app.post('/createPost', async (req,res)=>{
+  const posts = await prisma.Post.create({
+    data: {
+      title: req.body.title,
+      content: req.body.content,
+      image: req.body.image
+    },
+  })
+})
+
+//POSTST
 app.get('/posts', async (req,res)=>{
   res.render('posts',{pageName:"Posts"})
+  const posts = await prisma.Post.findMany({
+  })
 
 })
 
