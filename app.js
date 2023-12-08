@@ -7,11 +7,13 @@ const prisma = new PrismaClient();
 const bodyPasrer = require('body-parser');
 const mysql = require('mysql2')
 const session = require('express-session');
+const cookieParser = require('cookie-parser')
 
 app.use(session({
     secret: 'some secret',
     cookie: {maxAge: 10000},
-    saveUninitialized: false
+    saveUninitialized: false,
+    resave: false
 }))
 
 app.use(express.json());
@@ -19,6 +21,7 @@ app.use(express.json());
 app.use(bodyPasrer.urlencoded({extended:true}));
 
 app.use(express.static('public'));
+
 
 var connection = mysql.createConnection({
 
@@ -64,7 +67,7 @@ app.post('/', async (req,res)=>{
 //LOGIN
 app.get('/login', async (req,res)=>{
   try {
-    res.render('login',{pageName:"Login"})
+    res.render('login',{pageName:"Login",loginAnswer:""})
   } catch (error) {
     console.log(error);
     res.status(500).json({error:'error fetching ligin'});
@@ -84,29 +87,37 @@ app.post('/login',async(req,res)=>{
   console.log(user);
   if(req.body.emailOrUName == '')
   {
-    console.log('No susch username or email')
+    res.render('login',{loginAnswer:'No such username or email',pageName:"Login"})
   }else if(req.body.password ==  user.password ){
     console.log('successfully logged in')
     res.redirect('/posts')
   }
   else{
-    res.redirect('/login')
+    res.render('login',{loginAnswer:'Wrong password',pageName:"Login"})
   }
 })
 
 app.get('/createPost', async (req,res)=>{
+
+//findHere
+  console.log(session.userID);
   res.render('createPost',{pageName: 'Create Post'})
   
 })
 
 app.post('/createPost', async (req,res)=>{
-  const posts = await prisma.Post.create({
-    data: {
-      title: req.body.title,
-      content: req.body.content,
-      image: req.body.image
-    },
-  })
+  try {
+    const posts = await prisma.Post.create({
+      data: {
+        title: req.body.title,
+        content: req.body.content,
+        image: req.body.image
+      },
+    })
+  } catch (error) {
+    console.log(error);
+  }
+  
 })
 
 //POSTST
