@@ -36,8 +36,6 @@ app.set('view engine','ejs');
 
 app.get('/', async (req,res)=>{
     try {
-        // const logon = await prisma.user.findMany();
-        // res.json(logon);
        res.render('index',{pageName:"Create User"})
     } catch (error) {
         console.log(error);
@@ -118,15 +116,21 @@ app.get('/createPost', async (req,res)=>{
 app.post('/createPost', async (req,res)=>{
   try {
   console.log(req.sessionID);
-
-    const posts = await prisma.Post.create({
-      data: {
-        title: req.body.title,
-        content: req.body.content,
-        image: req.body.image,
-        authorId: req.session.user.id
-      },
-    })
+  console.log(req.session.user.id);
+try {
+  const posts = await prisma.Post.create({
+    data: {
+      title: req.body.title,
+      content: req.body.content,
+      image: req.body.image,
+      authorId: req.session.user.id
+    },
+  })
+  res.redirect('/posts')
+} catch (error) {
+  console.log(error);
+}
+    
   } catch (error) {
     console.log(error);
   }
