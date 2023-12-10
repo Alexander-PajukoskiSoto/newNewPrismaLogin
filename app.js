@@ -66,13 +66,18 @@ app.post('/', async (req,res)=>{
 })
 //LOGIN
 app.get('/login', async (req,res)=>{
+  if(req.res.authenticated == true){
+    res.redirect('/posts')
+  }else{
   try {
-    res.render('login',{pageName:"Login",loginAnswer:""})
+    res.render('login',{pageName:"Login",loginAnswer:"Please login before using the site"})
   } catch (error) {
     console.log(error);
     res.status(500).json({error:'error fetching ligin'});
   }
+}
 })
+
 
 app.post('/login',async(req,res)=>{
 
@@ -85,33 +90,49 @@ app.post('/login',async(req,res)=>{
 
   }})
   console.log(user);
-  if(req.body.emailOrUName == '')
-  {
-    res.render('login',{loginAnswer:'No such username or email',pageName:"Login"})
-  }else if(req.body.password ==  user.password ){
-    console.log('successfully logged in')
+
+  //If already logged in send to posts
+  if(req.session.authenticated ==true){
     res.redirect('/posts')
   }
+  //else, do login stuff  
   else{
-    res.render('login',{loginAnswer:'Wrong password',pageName:"Login"})
+    if(req.body.emailOrUName == '')
+    {
+      res.render('login',{loginAnswer:'No such username or email',pageName:"Login"})
+    }else if(req.body.password ==  user.password ){
+      console.log('successfully logged in')
+      req.session.authenticated = true;
+      console.log(req.session.authenticated)
+      req.session.user={id:user.id,admin:user.admin};
+      res.redirect('/posts')
+    }
+    else{
+      res.render('login',{loginAnswer:'Wrong password',pageName:"Login"})
+    }
   }
 })
 
 app.get('/createPost', async (req,res)=>{
-
-//findHere
-  console.log(session.userID);
+  if(req.session.authenticated){
   res.render('createPost',{pageName: 'Create Post'})
+  }
+  else{
+    res.redirect('/login')
+  }
   
 })
 
 app.post('/createPost', async (req,res)=>{
   try {
+  console.log(req.sessionID);
+
     const posts = await prisma.Post.create({
       data: {
         title: req.body.title,
         content: req.body.content,
-        image: req.body.image
+        image: req.body.image,
+        authorId: req.session.user.id
       },
     })
   } catch (error) {
@@ -122,10 +143,15 @@ app.post('/createPost', async (req,res)=>{
 
 //POSTST
 app.get('/posts', async (req,res)=>{
+  if(req.session.authenticated){
   res.render('posts',{pageName:"Posts"})
+  console.log(req.session.user.id);
   const posts = await prisma.Post.findMany({
   })
-
+  }
+  else{
+    res.redirect('/login')
+  }
 })
 
 const PORT = process.env.PORT || 3000;
