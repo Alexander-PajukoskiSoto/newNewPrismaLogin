@@ -5,10 +5,17 @@ const app = express();
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const bodyPasrer = require('body-parser');
-const mysql = require('mysql2')
+const mysql = require('mysql2');
 const session = require('express-session');
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
+const multer = require('multer');
+const upload = multer({dest:'image'})
 
+const storage = multer.diskStorage({
+  destination:( req, file, cb) => {
+    cb(null, './image')
+  }
+})
 app.use(session({
     secret: 'some secret',
     cookie: {maxAge: 30000},
@@ -113,7 +120,7 @@ app.get('/createPost', async (req,res)=>{
   
 })
 
-app.post('/createPost', async (req,res)=>{
+app.post('/createPost',upload.single('image'), async (req,res)=>{
   try {
   console.log(req.sessionID);
   console.log(req.session.user.id);
@@ -122,8 +129,8 @@ try {
     data: {
       title: req.body.title,
       content: req.body.content,
-      image: req.body.image,
-      authorId: req.session.user.id
+      authorId: req.session.user.id,
+      image: req.body.imageName
     },
   })
   res.redirect('/posts')
