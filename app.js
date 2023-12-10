@@ -90,13 +90,6 @@ app.post('/login',async(req,res)=>{
 
   }})
   console.log(user);
-
-  //If already logged in send to posts
-  if(req.session.authenticated ==true){
-    res.redirect('/posts')
-  }
-  //else, do login stuff  
-  else{
     if(req.body.emailOrUName == '')
     {
       res.render('login',{loginAnswer:'No such username or email',pageName:"Login"})
@@ -110,7 +103,6 @@ app.post('/login',async(req,res)=>{
     else{
       res.render('login',{loginAnswer:'Wrong password',pageName:"Login"})
     }
-  }
 })
 
 app.get('/createPost', async (req,res)=>{
