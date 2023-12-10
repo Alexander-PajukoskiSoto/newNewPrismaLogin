@@ -9,13 +9,16 @@ const mysql = require('mysql2');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
-const upload = multer({dest:'image'})
 
 const storage = multer.diskStorage({
   destination:( req, file, cb) => {
-    cb(null, './image')
+    cb(null, (__dirname+'/image/'))
+  },
+  filename:(req,file,cb)=>{
+    cb(null, file.originalname)
   }
 })
+const upload = multer({storage:storage})
 app.use(session({
     secret: 'some secret',
     cookie: {maxAge: 30000},
@@ -130,7 +133,7 @@ try {
       title: req.body.title,
       content: req.body.content,
       authorId: req.session.user.id,
-      image: req.body.imageName
+      image: req.file ? req.file.filename : ''
     },
   })
   res.redirect('/posts')
