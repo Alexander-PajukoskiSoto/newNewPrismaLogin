@@ -11,7 +11,7 @@ const cookieParser = require('cookie-parser')
 
 app.use(session({
     secret: 'some secret',
-    cookie: {maxAge: 10000},
+    cookie: {maxAge: 30000},
     saveUninitialized: false,
     resave: false
 }))
@@ -66,8 +66,8 @@ app.post('/', async (req,res)=>{
 })
 //LOGIN
 app.get('/login', async (req,res)=>{
-  if(req.res.authenticated == true){
-    res.redirect('/posts')
+  if(req.session.authenticated){
+    res.redirect('/posts');
   }else{
   try {
     res.render('login',{pageName:"Login",loginAnswer:"Please login before using the site"})
@@ -103,7 +103,7 @@ app.post('/login',async(req,res)=>{
     }else if(req.body.password ==  user.password ){
       console.log('successfully logged in')
       req.session.authenticated = true;
-      console.log(req.session.authenticated)
+      console.log(`AUTH ${req.session.authenticated}`)
       req.session.user={id:user.id,admin:user.admin};
       res.redirect('/posts')
     }
