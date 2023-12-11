@@ -9,6 +9,8 @@ const mysql = require('mysql2');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
+const path = require('path');
+const url = require('url');
 
 const storage = multer.diskStorage({
   destination:( req, file, cb) => {
@@ -19,9 +21,10 @@ const storage = multer.diskStorage({
   }
 })
 const upload = multer({storage:storage})
+const day = 1000 * 60 * 60 * 24;
 app.use(session({
     secret: 'some secret',
-    cookie: {maxAge: 30000},
+    cookie: {maxAge: day},
     saveUninitialized: false,
     resave: false
 }))
@@ -31,6 +34,9 @@ app.use(express.json());
 app.use(bodyPasrer.urlencoded({extended:true}));
 
 app.use(express.static('public'));
+app.use('/public',express.static('public'));//idk^
+app.use('/image', express.static('image'));  
+app.use('/public/image/',express.static('/public/image'));
 
 
 var connection = mysql.createConnection({
@@ -43,7 +49,7 @@ var connection = mysql.createConnection({
   });
 
 app.set('view engine','ejs');
-
+app.set('views', path.join(__dirname, 'views'));
 app.get('/', async (req,res)=>{
     try {
        res.render('index',{pageName:"Create User"})
@@ -149,8 +155,17 @@ try {
 
 //POSTST
 app.get('/posts', async (req,res)=>{
+  const posts = await prisma.Post.findMany({
+    where: {
+      published:false
+  }})
+  let postList = [];
+  posts.forEach((element,index) => {
+    postList.push(element);
+  });
+
   if(req.session.authenticated){
-  res.render('posts',{pageName:"Posts"})
+  res.render('posts',{pageName:"Posts", postList:postList, admin:req.session.user.admin})
   console.log(req.session.user.id);
   const posts = await prisma.Post.findMany({
   })
@@ -159,6 +174,17 @@ app.get('/posts', async (req,res)=>{
     res.redirect('/login')
   }
 })
+
+app.get('/edit', async(req, res) => {
+  const post = await prisma.Post.findFirst({
+    where: {
+      id:Number(req.query.id)
+  }})
+  let postObject = post;
+  res.render('edit',{pageName:'Edit', postObject:postObject})
+})
+
+
 
 const PORT = process.env.PORT || 3000;
 
