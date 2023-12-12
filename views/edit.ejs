@@ -7,11 +7,11 @@
 </head>
 <body>
     <h1><%=pageName%></h1>
-    <form action="/createPost" method="post" enctype="multipart/form-data">
-       <input type="text" name="title" id="title"> <br> <br>
-       <textarea name="content" id="content" cols="50" rows="10"></textarea><br> <br>
-        <input type="file" name="image" id="image"><br> <br>
-        <label for="imageName">Chosen File</label>
+    <form action="/edit" method="post" enctype="multipart/form-data">
+       <input type="text" name="title" id="title" value="<%= postObject.title %>"> <br> <br>
+       <textarea name="content" id="content" cols="50" rows="10"><%= postObject.content %></textarea><br> <br>
+        <input type="file" name="image" id="image" value="<%= postObject.image %>"><br> <br>
+        <input type="text" name="postId" id="postId" value="<%= postObject.id%>" style="visibility: hidden;"><br>
         <button type="submit"> Post </button>
     </form>
 </body>

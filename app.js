@@ -132,7 +132,6 @@ app.get('/createPost', async (req,res)=>{
 app.post('/createPost',upload.single('image'), async (req,res)=>{
   try {
   console.log(req.sessionID);
-  console.log(req.session.user.id);
 try {
   const posts = await prisma.Post.create({
     data: {
@@ -181,10 +180,29 @@ app.get('/edit', async(req, res) => {
       id:Number(req.query.id)
   }})
   let postObject = post;
+  console.log(postObject)
   res.render('edit',{pageName:'Edit', postObject:postObject})
 })
 
-
+app.post('/edit',upload.single('image'), async(req, res) => {
+   const post = await prisma.Post.findFirst({
+     where: {
+       id: Number(req.body.postId)
+   }})
+  console.log(req.body);
+  const updateUser = await prisma.Post.update({
+    where: {
+      id: Number(req.body.postId)
+    },
+    data: {
+      updatedAt: new Date(),
+      title: req.body.title,
+      content: req.body.content,
+      image: req.file ? req.file.filename : post.image
+    },
+  })
+  res.redirect('/posts')
+})
 
 const PORT = process.env.PORT || 3000;
 
