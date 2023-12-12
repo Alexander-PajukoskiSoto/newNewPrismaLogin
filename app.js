@@ -119,10 +119,15 @@ app.post('/login',async(req,res)=>{
 
 app.get('/createPost', async (req,res)=>{
   if(req.session.authenticated){
-  res.render('createPost',{pageName: 'Create Post'})
+    if(req.session.user.admin=='true'){
+      res.render('createPost',{pageName: 'Create Post'})
+    }
+    else{
+      res.render('login', {pageName:'login',loginAnswer:'Please log onto an admin account before creating a post'})
+    }
   }
   else{
-    res.redirect('/login')
+    res.render('login', {pageName:'login',loginAnswer:'Please log onto an admin account before creating a post'})
   }
   
 })
