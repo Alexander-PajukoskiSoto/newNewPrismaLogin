@@ -103,14 +103,12 @@ app.post('/login',async(req,res)=>{
       }]
 
   }})
-  console.log(user);
     if(req.body.emailOrUName == '')
     {
       res.render('login',{loginAnswer:'No such username or email',pageName:"Login"})
     }else if(req.body.password ==  user.password ){
       console.log('successfully logged in')
       req.session.authenticated = true;
-      console.log(`AUTH ${req.session.authenticated}`)
       req.session.user={id:user.id,admin:user.admin};
       res.redirect('/posts')
     }
@@ -130,8 +128,6 @@ app.get('/createPost', async (req,res)=>{
 })
 
 app.post('/createPost',upload.single('image'), async (req,res)=>{
-  try {
-  console.log(req.sessionID);
 try {
   const posts = await prisma.Post.create({
     data: {
@@ -142,10 +138,6 @@ try {
     },
   })
   res.redirect('/posts')
-} catch (error) {
-  console.log(error);
-}
-    
   } catch (error) {
     console.log(error);
   }
@@ -165,7 +157,6 @@ app.get('/posts', async (req,res)=>{
 
   if(req.session.authenticated){
   res.render('posts',{pageName:"Posts", postList:postList, admin:req.session.user.admin})
-  console.log(req.session.user.id);
   const posts = await prisma.Post.findMany({
   })
   }
@@ -175,13 +166,23 @@ app.get('/posts', async (req,res)=>{
 })
 
 app.get('/edit', async(req, res) => {
+  try{
   const post = await prisma.Post.findFirst({
     where: {
       id:Number(req.query.id)
   }})
   let postObject = post;
-  console.log(postObject)
+  if(req.session.user.admin=='true'){
   res.render('edit',{pageName:'Edit', postObject:postObject})
+  }
+  else{
+  req.session=null;
+  res.render('login',{pageName:'Login',loginAnswer:'Please log onto an admin account before using edit'});
+  }
+}catch(error){
+  console.log(error);
+  res.render('login',{pageName:'Login',loginAnswer:'Please log onto an admin account before using edit'});
+}
 })
 
 app.post('/edit',upload.single('image'), async(req, res) => {
@@ -189,7 +190,6 @@ app.post('/edit',upload.single('image'), async(req, res) => {
      where: {
        id: Number(req.body.postId)
    }})
-  console.log(req.body);
   const updateUser = await prisma.Post.update({
     where: {
       id: Number(req.body.postId)
@@ -204,6 +204,18 @@ app.post('/edit',upload.single('image'), async(req, res) => {
   res.redirect('/posts')
 })
 
+app.get('/bigPost', async(req,res)=>{
+  const post = await prisma.Post.findFirst({
+    where: {
+      id: Number(req.query.id)
+  }})
+  let postObject = post;
+  res.render('bigPost',{pageName:'The Post', postObject:postObject})
+})
+app.get('/logout', async(req, res)=>{
+  req.session.destroy();
+  res.render('login',{pageName:'Login',loginAnswer:'Logged out'})
+})
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

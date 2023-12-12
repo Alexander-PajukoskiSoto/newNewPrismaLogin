@@ -6,6 +6,29 @@
     <title><%=pageName%></title>
 </head>
 <body>
+    <style>
+        nav{
+            width: 100%;
+            display: flex;
+            justify-content:space-around;
+        }
+        nav>a{
+            padding: 10px;
+            background-color:rgb(13, 84, 135);
+            border-radius: 3px;
+            text-decoration: none;
+            color: azure;
+        }
+        nav>a:hover{
+            background-color: rgb(9, 62, 100);
+            color: rgb(192, 204, 204);
+        }
+    </style>
+    <nav>
+        <a href="/posts">Posts</a>
+        <a href="/login">Login</a>
+        <a href="/logout">Logout</a>
+    </nav>
     <h1><%=pageName%></h1>
     <form action="/login" method="post">
         <input type="text" name="emailOrUName" id="emailOrUName" placeholder="Email or Username">

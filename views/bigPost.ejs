@@ -7,6 +7,11 @@
 </head>
 <body>
     <style>
+        body{
+            margin: 0;
+            padding: 0;
+            background-color: rgb(70, 70, 70);
+        }
         nav{
             width: 100%;
             display: flex;
@@ -23,18 +28,34 @@
             background-color: rgb(9, 62, 100);
             color: rgb(192, 204, 204);
         }
+        .mainDiv{
+            width: 100%;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .title{
+            font-size: 2em;
+        }
+        .image{
+            border: solid rgb(13, 84, 135) 10px;
+            border-radius: 2px;
+            max-width: 50%;
+        }
+        h1,p{
+         color: azure;   
+        }
     </style>
     <nav>
         <a href="/posts">Posts</a>
         <a href="/login">Login</a>
         <a href="/logout">Logout</a>
     </nav>
-    <h1><%=pageName%></h1>
-    <form action="/createPost" method="post" enctype="multipart/form-data">
-       <input type="text" name="title" id="title"> <br> <br>
-       <textarea name="content" id="content" cols="50" rows="10"></textarea><br> <br>
-        <input type="file" name="image" id="image"><br> <br>
-        <button type="submit"> Post </button>
-    </form>
+    <div class="mainDiv">
+        <h1 class="title"><%= postObject.title%></h1>
+        <img src="../image/<%= postObject.image%>" alt="<%= postObject.image%>" class="image">
+        <p><%=postObject.content%></p>
+    </div>
 </body>
 </html>
